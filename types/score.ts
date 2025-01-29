@@ -36,4 +36,47 @@ export const game = (winner: Player): Game => ({
   player: winner,
 });
 
-export type Score = Points | Game;
+
+// Constructeur de Deuce
+export type Deuce = {
+  kind: 'DEUCE';
+};
+
+export const deuce = (): Deuce => ({
+  kind: 'DEUCE',
+});
+
+
+// Constructeur de Forty 
+export type Forty = {
+  kind: 'FORTY';
+  player: Player; // Qui a 40 points
+  opponentPoints: Point; // Points de l'autre joueur (30 max)
+};
+
+export const forty = (player: Player, opponentPoints: Point): Forty => {
+  if (opponentPoints > 30) {
+    throw new Error("Invalid score: opponent cannot have more than 30 points in a 'FORTY' state.");
+  }
+  return {
+    kind: 'FORTY',
+    player,
+    opponentPoints,
+  };
+};
+
+
+
+// Constructeur de Advantage 
+export type Advantage = {
+  kind: 'ADVANTAGE';
+  player: Player; // Qui a l'avantage
+};
+
+export const advantage = (player: Player): Advantage => ({
+  kind: 'ADVANTAGE',
+  player,
+});
+
+
+export type Score = Points | Game | Deuce | Forty | Advantage;
