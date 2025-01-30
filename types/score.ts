@@ -1,7 +1,9 @@
 import { Player } from './player';
 
 // Surely not the best choice
-export type Point = number;
+// export type Point = number;
+export type Point =  Love | Fifteen | Thirty;
+
 
 export type PointsData = {
   PLAYER_ONE: Point;
@@ -54,16 +56,19 @@ export type Forty = {
   opponentPoints: Point; // Points de l'autre joueur (30 max)
 };
 
-export const forty = (player: Player, opponentPoints: Point): Forty => {
-  if (opponentPoints > 30) {
-    throw new Error("Invalid score: opponent cannot have more than 30 points in a 'FORTY' state.");
+export const pointToNumber = (point: Point): number => {
+  switch (point.kind) {
+    case 'LOVE':
+      return 0;
+    case 'FIFTEEN':
+      return 15;
+    case 'THIRTY':
+      return 30;
+    default:
+      throw new Error("Invalid Point type");
   }
-  return {
-    kind: 'FORTY',
-    player,
-    opponentPoints,
-  };
 };
+
 
 
 
@@ -78,5 +83,49 @@ export const advantage = (player: Player): Advantage => ({
   player,
 });
 
+// Autre definitions 
+// ✅ Définition pour "Love" (0 point)
+export type Love = {
+  kind: 'LOVE';
+};
+export const love = (): Love => ({ kind: 'LOVE' });
 
-export type Score = Points | Game | Deuce | Forty | Advantage;
+// ✅ Définition pour "Fifteen" (15 points)
+export type Fifteen = {
+  kind: 'FIFTEEN';
+};
+export const fifteen = (): Fifteen => ({ kind: 'FIFTEEN' });
+
+// ✅ Définition pour "Thirty" (30 points)
+export type Thirty = {
+  kind: 'THIRTY';
+};
+export const thirty = (): Thirty => ({ kind: 'THIRTY' });
+
+
+export const forty = (player: Player, opponentPoints: Point): Forty => {
+  if (pointToNumber(opponentPoints) > 30) {
+    throw new Error("Invalid score: opponent cannot have more than 30 points in a 'FORTY' state.");
+  }
+  return {
+    kind: 'FORTY',
+    player,
+    opponentPoints,
+  };
+};
+
+
+// Représente un joueur ayant 40 points et le score de l'autre joueur.
+export type FortyData = {
+  player: Player; // Le joueur qui a 40 points
+  otherPoint: Point; // Score de l'autre joueur (Love, Fifteen, Thirty)
+};
+
+export const fortyData = (player: Player, otherPoint: Point): FortyData => ({
+  player,
+  otherPoint,
+});
+
+
+
+export type Score = Points | Game | Deuce | Forty | Advantage | Fifteen | FortyData | Love | Thirty ;

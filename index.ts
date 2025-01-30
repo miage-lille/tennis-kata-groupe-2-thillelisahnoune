@@ -1,5 +1,5 @@
 import { Player } from './types/player';
-import { Point, PointsData, Score } from './types/score';
+import { advantage, deuce, Forty, forty, game, love, Point, PointsData, pointToNumber, Score, thirty } from './types/score';
 // import { none, Option, some, match as matchOpt } from 'fp-ts/Option';
 // import { pipe } from 'fp-ts/lib/function';
 
@@ -23,15 +23,13 @@ export const otherPlayer = (player: Player) => {
 };
 // Exercice 1 :
 export const pointToString = (point: Point): string =>{
-  switch (point) {
-    case 0:
+  switch (point.kind) {
+    case 'LOVE':
       return "Love";
-    case 15:
+    case 'FIFTEEN':
       return "Fifteen";
-    case 30:
+    case 'THIRTY':
       return "Thirty";
-    case 40:
-      return "Forty";
     default:
       throw new Error("Invalid point value");
   }
@@ -40,6 +38,9 @@ export const pointToString = (point: Point): string =>{
 
 export const scoreToString = (score: Score): string =>
   {
+    if (!('kind' in score)) {
+      throw new Error("Invalid score type");
+    }
     switch (score.kind) {
       case 'POINTS':
         return `${pointToString(score.pointsData.PLAYER_ONE)} - ${pointToString(score.pointsData.PLAYER_TWO)}`;
@@ -57,21 +58,32 @@ export const scoreToString = (score: Score): string =>
   };
 
 export const scoreWhenDeuce = (winner: Player): Score => {
-  throw new Error('not implemented');
+  return advantage(winner);
 };
 
 export const scoreWhenAdvantage = (
-  advantagedPlayed: Player,
+  advantagedPlayer: Player,
   winner: Player
 ): Score => {
-  throw new Error('not implemented');
+  if (advantagedPlayer === winner) {
+    return game(winner); 
+  }
+  return deuce();
 };
 
 export const scoreWhenForty = (
-  currentForty: unknown, // TO UPDATE WHEN WE KNOW HOW TO REPRESENT FORTY
+  currentForty: Forty, // TO UPDATE WHEN WE KNOW HOW TO REPRESENT FORTY
   winner: Player
 ): Score => {
-  throw new Error('not implemented');
+  if (currentForty.player === winner) {
+    return game(winner); 
+  }
+
+  if (pointToNumber(currentForty.opponentPoints) === 30) {
+    return deuce(); 
+  }
+
+  return forty(currentForty.player, thirty());
 };
 
 export const scoreWhenGame = (winner: Player): Score => {
