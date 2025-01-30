@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals';
-import { otherPlayer, playerToString } from '..';
+import { otherPlayer, playerToString, scoreWhenPoint } from '..';
 import { pointToString, scoreToString } from '..';
 import { Score, game, deuce, forty, advantage, points, love, fifteen, thirty } from '../types/score';
 import * as fc from 'fast-check';
@@ -85,24 +85,26 @@ describe('Tests for transition functions', () => {
     console.log('To fill when we will know how represent Forty');
   });
   // -------------------------TESTS POINTS-------------------------- //
-  // test('Given players at 0 or 15 points score kind is still POINTS', () => {
-  // fc.assert(
-  //   fc.property(G.getPoints(), G.getPlayer(), ({ pointsData }, winner) => {
-  //     throw new Error(
-  //       'Your turn to code the preconditions, expected result and test.'
-  //     );
-  //   })
-  // );
-  // });
-  // test('Given one player at 30 and win, score kind is forty', () => {
-  // fc.assert(
-  //   fc.property(G.getPoints(), G.getPlayer(), ({ pointsData }, winner) => {
-  //     throw new Error(
-  //       'Your turn to code the preconditions, expected result and test.'
-  //     );
-  //   })
-  // );
-  // });
+  test('Given players at 0 or 15 points score kind is still POINTS', () => {
+    fc.assert(
+      fc.property(G.getPoints(), G.getPlayer(), ({ pointsData }, winner) => {
+        const newScore = scoreWhenPoint(pointsData, winner);
+        expect(newScore.kind).toBe('POINTS');
+      })
+    );
+  });
+  test('Given one player at 30 and win, score kind is forty', () => {
+    fc.assert(
+      fc.property(G.getPoints(), G.getPlayer(), ({ pointsData }, winner) => {
+        // Vérifier que si un joueur a 30 et gagne, il passe à 40
+        if (pointsData[winner].kind === 'THIRTY') {
+          const newScore = scoreWhenPoint(pointsData, winner);
+          expect(newScore.kind).toBe('FORTY');
+          // expect(newScore.player).toBe(winner);
+        }
+      })
+    );
+  });
 });
 
 

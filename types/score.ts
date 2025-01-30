@@ -128,4 +128,4 @@ export const fortyData = (player: Player, otherPoint: Point): FortyData => ({
 
 
 
-export type Score = Points | Game | Deuce | Forty | Advantage | Fifteen | FortyData | Love | Thirty ;
+export type Score = Points | Game | Deuce | Forty | Advantage  ;
