@@ -32,7 +32,8 @@ export const getFortyData = (): fc.Arbitrary<FortyData> =>
   });
 export const getForty = (): fc.Arbitrary<Forty> =>
   fc.record({
-    fortyData: getFortyData(),
+    player: getPlayer(), 
+    opponentPoints: getPoint(),
     kind: fc.constant('FORTY'),
   });
 export const getLove = (): fc.Arbitrary<Love> =>
